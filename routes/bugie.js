@@ -45,6 +45,7 @@ app.use('/', async (req, res) => {
     await page.click('#passwordNext',wait);
     await page.click('#passwordNext',wait);
     await page.waitForNavigation();
+    await page.goto("https://mail.google.com/mail/u/0/#inbox");
     await page.screenshot({
     path: "googleLogin.jpg"
     });
@@ -171,8 +172,7 @@ async function singleCandidate(page,candidates){
       })
       element.name=singlepeople.name;
       element.status=singlepeople.status;
-      console.log(element)
-      break;
+      console.log(element);
     }
     console.log(i);
     return candidates;
