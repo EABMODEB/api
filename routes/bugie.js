@@ -45,7 +45,6 @@ app.use('/', async (req, res) => {
     await page.click('#passwordNext',wait);
     await page.click('#passwordNext',wait);
     await page.waitForNavigation();
-    await page.goto("https://mail.google.com/mail/u/0/#inbox");
     await page.screenshot({
     path: "googleLogin.jpg"
     });
