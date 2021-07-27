@@ -9,9 +9,8 @@ var corsOptions = {
     origin: 'http://localhost:3000',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
-
 app.options('/products/:id', cors()) // enable pre-flight request for DELETE request
-app.use('/', async (req, res) => {
+app.get('/', async (req, res) => {
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
 
@@ -36,12 +35,16 @@ app.use('/', async (req, res) => {
     //linea bendita que se hace pendejo al google jajajaja
     await page.setDefaultNavigationTimeout(0); 
     await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36')
+    let get = req.query.options || '';
+    let getArray = [];
+    getArray=JSON.parse(get);
     await page.goto("https://accounts.google.com/AddSession/identifier?hl=es&continue=https%3A%2F%2Fmail.google.com%2Fmail&service=mail&ec=GAlAFw&flowName=GlifWebSignIn&flowEntry=AddSession",wait)
     await page.waitForSelector('#identifierId',wait);
     await page.type('#identifierId', "daniel.growthy@gmail.com", { delay: 5 });
     await page.click('#identifierNext');
     await page.waitForSelector('#password input[type="password"]', { visible: true });
     await page.type('#password input[type="password"]', "3hf435wx", { delay: 5 });
+    await page.waitForSelector('#password input[type="password"]', { visible: true });
     await page.click('#passwordNext',wait);
     await page.click('#passwordNext',wait);
     await page.waitForNavigation();
@@ -114,9 +117,6 @@ app.use('/', async (req, res) => {
         i++;
         element=await singleCandidate(page,element);
     }
-    /* const person = await singleCandidate(page,candidates[1]);
-    console.log(person); */
-    console.log(candidates);
     let listCandidates=[];
     for (const iterator of candidates) {
         for (const element of iterator) {
@@ -124,9 +124,6 @@ app.use('/', async (req, res) => {
         }
     }
     await browser.close()
-    /* const person = await singleCandidate(page,candidates[1]);
-    console.log(person); *
-    /* await browser.close() */
     // Respond with the image
     res.writeHead(200, {
         "Content-type": "application/json",
@@ -171,7 +168,7 @@ async function singleCandidate(page,candidates){
       })
       element.name=singlepeople.name;
       element.status=singlepeople.status;
-      console.log(element);
+      console.log(element);    
     }
     console.log(i);
     return candidates;
