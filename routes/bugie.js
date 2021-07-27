@@ -35,6 +35,8 @@ app.get('/', async (req, res) => {
     //linea bendita que se hace pendejo al google jajajaja
     await page.setDefaultNavigationTimeout(0); 
     await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36')
+    
+    //Convierte el JSON de Bugie en un arreglo para leer
     let get = req.query.options || '';
     let getArray = [];
     getArray=JSON.parse(get);
@@ -45,6 +47,8 @@ app.get('/', async (req, res) => {
     await page.waitForSelector('#password input[type="password"]', { visible: true });
     await page.type('#password input[type="password"]', "3hf435wx", { delay: 5 });
     await page.waitForSelector('#password input[type="password"]', { visible: true });
+    await page.click('#passwordNext',wait);
+    await page.click('#passwordNext',wait);
     await page.click('#passwordNext',wait);
     await page.click('#passwordNext',wait);
     await page.waitForNavigation();
