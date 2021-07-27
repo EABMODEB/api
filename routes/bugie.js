@@ -31,9 +31,6 @@ app.get('/', async (req, res) => {
         ],
         headless:false,
     })
-    let get = req.query.options || '';
-    let getArray = [];
-    getArray=JSON.parse(get);
 
     const page = await browser.newPage()
     //linea bendita que se hace pendejo al google jajajaja
@@ -44,6 +41,7 @@ app.get('/', async (req, res) => {
     let get = req.query.options || '';
     let getArray = [];
     getArray=JSON.parse(get);
+    
     await page.goto("https://accounts.google.com/AddSession/identifier?hl=es&continue=https%3A%2F%2Fmail.google.com%2Fmail&service=mail&ec=GAlAFw&flowName=GlifWebSignIn&flowEntry=AddSession",wait)
     await page.waitForSelector('#identifierId',wait);
     await page.type('#identifierId', "daniel.growthy@gmail.com", { delay: 5 });
@@ -108,9 +106,12 @@ app.get('/', async (req, res) => {
         let i=0;
         const filtros = document.querySelectorAll('.cpqap-ScreenerQuestions-preferred');
         values.forEach(element=>{
+        let rfilter =[];
+        rfilter = filtros[i].innerText.split(" ",1);
+        console.log(rfilter)
         array.push({
             id:element.getAttribute('href'),
-            filtros: filtros[i].innerText,
+            filtros: rfilter[0],
         });
         i++;
         })
