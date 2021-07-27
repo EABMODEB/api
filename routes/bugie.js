@@ -61,7 +61,7 @@ app.use('/', async (req, res) => {
     path: "hola.jpg"
     });
     //busca el trabajo
-    const search="psicologo";
+    const search=getArray.body.values;
     await page.goto("https://employers.indeed.com/j#jobs?title="+search);
     
     await page.waitForSelector(".css-zsw846");
