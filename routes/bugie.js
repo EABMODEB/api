@@ -31,6 +31,10 @@ app.get('/', async (req, res) => {
         ],
         headless:false,
     })
+    let get = req.query.options || '';
+    let getArray = [];
+    getArray=JSON.parse(get);
+
     const page = await browser.newPage()
     //linea bendita que se hace pendejo al google jajajaja
     await page.setDefaultNavigationTimeout(0); 
@@ -68,7 +72,7 @@ app.get('/', async (req, res) => {
     path: "hola.jpg"
     });
     //busca el trabajo
-    const search="psicologo";
+    const search= getArray.body.values;
     await page.goto("https://employers.indeed.com/j#jobs?title="+search);
     
     await page.waitForSelector(".css-zsw846");
