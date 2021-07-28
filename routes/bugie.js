@@ -6,14 +6,14 @@ const plugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(plugin());
 const app = express();
 var corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: 'https://bugie.tryme.com.mx',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors());
 app.options('/products/:id', cors()) // enable pre-flight request for DELETE request
 app.get('/', async (req, res) => {
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'https://bugie.tryme.com.mx');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
