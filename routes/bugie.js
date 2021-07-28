@@ -32,6 +32,7 @@ app.get('/', async (req, res) => {
         ],
         headless:true,
     })
+    //abrir navegador
 
     const page = await browser.newPage()
     //linea bendita que se hace pendejo al google jajajaja
