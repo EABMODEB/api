@@ -43,14 +43,8 @@ app.get('/', async (req, res) => {
     let get = req.query.options || '';
     let getArray = [];
     getArray=JSON.parse(get);
-    let listCandidates=[
-        {
-            name:"hola si jalo",
-            status:"solo que",
-            filtro:"no tengo tiempo",
-        }
-    ];
-    /* await page.goto("https://accounts.google.com/AddSession/identifier?hl=es&continue=https%3A%2F%2Fmail.google.com%2Fmail&service=mail&ec=GAlAFw&flowName=GlifWebSignIn&flowEntry=AddSession",wait)
+    
+    await page.goto("https://accounts.google.com/AddSession/identifier?hl=es&continue=https%3A%2F%2Fmail.google.com%2Fmail&service=mail&ec=GAlAFw&flowName=GlifWebSignIn&flowEntry=AddSession",wait)
     await page.waitForSelector('#identifierId',wait);
     await page.type('#identifierId', "daniel.growthy@gmail.com", { delay: 5 });
     await page.click('#identifierNext');
@@ -139,7 +133,7 @@ app.get('/', async (req, res) => {
         for (const element of iterator) {
             listCandidates.push(element);
         }
-    } */
+    }
     await browser.close()
     // Respond with the image
     res.writeHead(200, {
