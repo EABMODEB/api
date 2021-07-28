@@ -30,7 +30,7 @@ app.get('/', async (req, res) => {
             '--disable-setuid-sandbox', 
             '--disable-gpu'
         ],
-        headless:false,
+        headless:true,
     })
 
     const page = await browser.newPage()
