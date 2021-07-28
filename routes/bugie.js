@@ -9,6 +9,7 @@ var corsOptions = {
     origin: 'http://localhost:3000',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
+app.use(cors());
 app.options('/products/:id', cors()) // enable pre-flight request for DELETE request
 app.get('/', async (req, res) => {
     // Website you wish to allow to connect
