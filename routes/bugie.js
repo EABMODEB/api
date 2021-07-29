@@ -135,13 +135,30 @@ app.get('/', async (req, res) => {
         }
     }
     await browser.close()
-    // Respond with the image
-    res.writeHead(200, {
-        "Content-type": "application/json",
-    });
-    res.end(JSON.stringify(listCandidates));
+    let isFinished=false;
+    res.once('end', () => {
+        isFinished=true;
+    });res.writeHead(200, );
+    const waitAndSend = () => {
+        setTimeout(() => {
+            // If the response hasn't finished and hasn't sent any data back....
+            if (!isFinished && !isDataSent) {
+            // Need to write the status code/headers if they haven't been sent yet.
+            if (!res.headersSent) {
+                res.writeHead(202,{
+                    "Content-type": "application/json",
+                });
+                res.write(hola);
+            }
+            res.write(space);
 
-    await browser.close();
+            // Wait another 15 seconds
+            waitAndSend();
+            }
+        }, 15000);
+    };
+    waitAndSend();
+    next();
 })
 module.exports = app;
 async function allCandidates(page,works){
