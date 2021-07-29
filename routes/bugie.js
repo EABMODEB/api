@@ -170,6 +170,7 @@ const getData = ('/', async (req, res,next) => {
     waitAndSend();
     next();
 })
+app.use(getData);
 module.exports = app;
 async function allCandidates(page,works){
     let text;
@@ -211,4 +212,3 @@ async function singleCandidate(page,candidates){
     console.log(i);
     return candidates;
   } 
-  app.use(getData);
