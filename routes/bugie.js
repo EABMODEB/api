@@ -6,14 +6,14 @@ const plugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(plugin());
 const app = express();
 var corsOptions = {
-    origin: 'https://bugie.tryme.com.mx',
+    origin: 'http://localhost:3000/',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors());
 app.options('/products/:id', cors()) // enable pre-flight request for DELETE request
-app.get('/', async (req, res) => {
+const getData = ('/', async (req, res,next) => {
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'https://bugie.tryme.com.mx');
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -135,25 +135,35 @@ app.get('/', async (req, res) => {
         }
     }
     await browser.close()
-    let isFinished=false;
+    const space = '*';
+    let isFinished = false;
+    let isDataSent = false;
+    res.on('data', (data) => {
+        // Look for something other than our blank space to indicate that real
+        // data is now being sent back to the client.
+        if (data !== space) {
+          isDataSent = true;
+        }
+      });
     res.once('end', () => {
         isFinished=true;
-    });res.writeHead(200, );
+    });
     const waitAndSend = () => {
         setTimeout(() => {
             // If the response hasn't finished and hasn't sent any data back....
             if (!isFinished && !isDataSent) {
             // Need to write the status code/headers if they haven't been sent yet.
-            if (!res.headersSent) {
-                res.writeHead(202,{
-                    "Content-type": "application/json",
-                });
-                res.write(hola);
-            }
-            res.write(space);
+                if (!res.headersSent) {
+                    res.writeHead(202,{
+                        "Content-type": "application/json",
+                    });
+                }
+                res.write(space);
 
-            // Wait another 15 seconds
-            waitAndSend();
+                // Wait another 15 seconds
+                waitAndSend();
+            }else{
+                res.write(JSON.stringify(listCandidates));
             }
         }, 15000);
     };
@@ -201,3 +211,4 @@ async function singleCandidate(page,candidates){
     console.log(i);
     return candidates;
   } 
+  app.use(getData);
