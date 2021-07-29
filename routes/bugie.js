@@ -11,9 +11,9 @@ var corsOptions = {
 }
 app.use(cors());
 app.options('/products/:id', cors()) // enable pre-flight request for DELETE request
-const getData = ('/', async (req, res,next) => {
+app.get('/', async (req, res) => {
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -30,7 +30,7 @@ const getData = ('/', async (req, res,next) => {
             '--disable-setuid-sandbox', 
             '--disable-gpu'
         ],
-        headless:true,
+        headless:false,
     })
     //abrir navegador
 
@@ -49,7 +49,7 @@ const getData = ('/', async (req, res,next) => {
     await page.type('#identifierId', "daniel.growthy@gmail.com", { delay: 5 });
     await page.click('#identifierNext');
     await page.waitForSelector('#password input[type="password"]', { visible: true });
-    await page.type('#password input[type="password"]', "3hf435wx", { delay: 5 });
+    await page.type('#password input[type="password"]', "3hf435wy", { delay: 5 });
     await page.waitForSelector('#password input[type="password"]', { visible: true });
     await page.click('#passwordNext',wait);
     await page.click('#passwordNext',wait);
@@ -59,7 +59,7 @@ const getData = ('/', async (req, res,next) => {
     await page.screenshot({
     path: "googleLogin.jpg"
     });
-
+    console.log("aqui ando");
     await page.goto("https://secure.indeed.com/account/login?hl=es_MX&co=MX&continue=https%3A%2F%2Fmx.indeed.com%2F&tmpl=desktop&service=my&from=gnav-util-homepage&jsContinue=https%3A%2F%2Fmx.indeed.com%2F&empContinue=https%3A%2F%2Faccount.indeed.com%2Fmyaccess",wait)
     await page.click("#login-google-button", wait);
     await page.waitForNavigation();
@@ -72,7 +72,9 @@ const getData = ('/', async (req, res,next) => {
     path: "hola.jpg"
     });
     //busca el trabajo
-    const search= getArray.body.values;
+    console.log(getArray)
+    const search= getArray.values;
+    console.log(search)
     await page.goto("https://employers.indeed.com/j#jobs?title="+search);
     
     await page.waitForSelector(".css-zsw846");
@@ -134,43 +136,13 @@ const getData = ('/', async (req, res,next) => {
             listCandidates.push(element);
         }
     }
-    await browser.close()
-    const space = '*';
-    let isFinished = false;
-    let isDataSent = false;
-    res.on('data', (data) => {
-        // Look for something other than our blank space to indicate that real
-        // data is now being sent back to the client.
-        if (data !== space) {
-          isDataSent = true;
-        }
-      });
-    res.once('end', () => {
-        isFinished=true;
+    res.writeHead(202,{
+        "Content-type": "application/json",
     });
-    const waitAndSend = () => {
-        setTimeout(() => {
-            // If the response hasn't finished and hasn't sent any data back....
-            if (!isFinished && !isDataSent) {
-            // Need to write the status code/headers if they haven't been sent yet.
-                if (!res.headersSent) {
-                    res.writeHead(202,{
-                        "Content-type": "application/json",
-                    });
-                }
-                res.write(space);
-
-                // Wait another 15 seconds
-                waitAndSend();
-            }else{
-                res.write(JSON.stringify(listCandidates));
-            }
-        }, 15000);
-    };
-    waitAndSend();
-    next();
+    res.end(JSON.stringify(listCandidates));
+    console.log("hola")
+    await browser.close()
 })
-app.use(getData);
 module.exports = app;
 async function allCandidates(page,works){
     let text;
