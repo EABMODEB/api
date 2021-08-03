@@ -34,9 +34,9 @@ app.get('/', async (req, res) => {
     })
     //abrir navegador
 
-    const page = await browser.newPage()
-    //linea bendita que se hace pendejo al google jajajaja
+    const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(0); 
+    //linea bendita que se hace pendejo al google jajajaja
     await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36')
     
     //Convierte el JSON de Bugie en un arreglo para leer
@@ -49,7 +49,7 @@ app.get('/', async (req, res) => {
     await page.type('#identifierId', "daniel.growthy@gmail.com", { delay: 5 });
     await page.click('#identifierNext');
     await page.waitForSelector('#password input[type="password"]', { visible: true });
-    await page.type('#password input[type="password"]', "3hf435wy", { delay: 5 });
+    await page.type('#password input[type="password"]', "p1e2p1e2", { delay: 5 });
     await page.waitForSelector('#password input[type="password"]', { visible: true });
     await page.click('#passwordNext',wait);
     await page.click('#passwordNext',wait);
