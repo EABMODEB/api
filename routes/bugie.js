@@ -78,28 +78,37 @@ app.get('/', async (req, res) => {
     await page.goto("https://employers.indeed.com/j#jobs?title="+search);
 
     let status = false;
-    let listCandidates={};
+    let listCandidates = [];
     
     listCandidates = await page.evaluate(()=>{
         const values2 = document.querySelectorAll(".HanselEmptyState-container");
-
+        let listCandidates2 = [];
         let vacio = {};
         console.log(values2);
-        let array = [];
         if(values2.length == 1){
             array = null;
             console.log("Sí entró")
             status = true;
-            vacio = {name: "sr1", filtros: "sr1", status:"sr1"}
-            listCandidates = vacio;
+            vacio = {name:"Sr1", filtros: "Sr1", status: "Sr1"};
+            listCandidates2.push(vacio);
         }else{
             console.log("No entró")
         }
 
-        return array;
+        return listCandidates2;
     });
 
-    /*if(status == false){
+    const flag = await page.evaluate(()=>{
+        let status = false;
+        const values2 = document.querySelectorAll(".HanselEmptyState-container");
+        if(values2.length == 1){
+            status = true;
+        }
+
+        return status;
+    });
+
+    if(flag == false){
         await page.waitForSelector(".css-zsw846");
 
         const works = await page.evaluate(()=>{
@@ -160,7 +169,7 @@ app.get('/', async (req, res) => {
                 listCandidates.push(element);
             }
         }
-    }*/
+    }
     
     
     res.writeHead(202,{
@@ -169,7 +178,7 @@ app.get('/', async (req, res) => {
     console.log(listCandidates);
     res.end(JSON.stringify(listCandidates));
     console.log("hola")
-    //await browser.close()
+    await browser.close()
 })
 module.exports = app;
 
