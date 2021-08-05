@@ -121,54 +121,59 @@ app.get('/', async (req, res) => {
             return array;
         });
 
-        console.log("hola");
         let text = await allCandidates(page,works);
         console.log(text);
-        await page.goto("https://employers.indeed.com"+text);
-        await page.waitForSelector('.cpqap-CandidateCell-name-text');
-        const pages = await page.evaluate(()=>{
-        return  document.querySelectorAll(".cpqap-Pagination-page").length;
-        })
-        let candidates = [];
-        let Pagination = [];
-        for (let j=1; j<=pages+1;j++){
-        Pagination.push('https://employers.indeed.com'+text+"&p="+j);
-        }
-        console.log(Pagination);
-        for (const iterator of Pagination) {
-        await page.goto(iterator);
-        await page.waitForSelector(".cpqap-CandidateCell-name-text");
-        let listCandidates = await page.evaluate(()=>{
-            const values = document.querySelectorAll(".cpqap-CandidateCell-name-text");
-            const array = [];
-            let i=0;
-            const filtros = document.querySelectorAll('.cpqap-ScreenerQuestions-preferred');
-            values.forEach(element=>{
-            let rfilter =[];
-            rfilter = filtros[i].innerText.split(" ",1);
-            console.log(rfilter)
-            array.push({
-                id:element.getAttribute('href'),
-                filtros: rfilter[0],
-            });
-            i++;
+        if(text.length > 0){
+            await page.goto("https://employers.indeed.com"+text);
+            await page.waitForSelector('.cpqap-CandidateCell-name-text');
+            const pages = await page.evaluate(()=>{
+            return  document.querySelectorAll(".cpqap-Pagination-page").length;
             })
-            return array;
-        })
-        console.log(listCandidates);
-        candidates.push(listCandidates);
-        }
-        console.log(candidates);
-        let i=0;
-        for (let element of candidates) {
-            i++;
-            element=await singleCandidate(page,element);
-        }
-        for (const iterator of candidates) {
-            for (const element of iterator) {
-                listCandidates.push(element);
+            let candidates = [];
+            let Pagination = [];
+            for (let j=1; j<=pages+1;j++){
+            Pagination.push('https://employers.indeed.com'+text+"&p="+j);
             }
+            console.log(Pagination);
+            for (const iterator of Pagination) {
+            await page.goto(iterator);
+            await page.waitForSelector(".cpqap-CandidateCell-name-text");
+            let listCandidates = await page.evaluate(()=>{
+                const values = document.querySelectorAll(".cpqap-CandidateCell-name-text");
+                const array = [];
+                let i=0;
+                const filtros = document.querySelectorAll('.cpqap-ScreenerQuestions-preferred');
+                values.forEach(element=>{
+                let rfilter =[];
+                rfilter = filtros[i].innerText.split(" ",1);
+                console.log(rfilter)
+                array.push({
+                    id:element.getAttribute('href'),
+                    filtros: rfilter[0],
+                });
+                i++;
+                })
+                return array;
+            })
+            console.log(listCandidates);
+            candidates.push(listCandidates);
+            }
+            console.log(candidates);
+            let i=0;
+            for (let element of candidates) {
+                i++;
+                element=await singleCandidate(page,element);
+            }
+            for (const iterator of candidates) {
+                for (const element of iterator) {
+                    listCandidates.push(element);
+                }
+            }
+        }else{
+            let vacio = {name:"Sr1", filtros: "Sr1", status: "Sr1"};
+            listCandidates.push(vacio);
         }
+        
     }
     
     
@@ -185,17 +190,25 @@ module.exports = app;
 async function allCandidates(page,works){
     let text;
     for (const element of works) {
-    await page.goto('https://employers.indeed.com/'+element);
-    await page.waitForSelector(".css-f0xprd");
-    text = await page.evaluate(()=>{
-    const values = document.querySelectorAll(".css-f0xprd");
-    const array = [];
-    array.push(values[1].getAttribute('href'));
-    console.log(array);
-    return array;
-    });
-}
-return text;
+        await page.goto('https://employers.indeed.com/'+element);
+        //css-16edfe3
+        await page.waitForSelector(".css-14yg0vp");
+        
+        text = await page.evaluate(()=>{
+            const array = [];
+            if(document.querySelector(".css-f0xprd")){
+                const values = document.querySelectorAll(".css-f0xprd");
+                console.log("Mostrando el Values " + values);
+                array.push(values[1].getAttribute('href'));
+                console.log("Mostrando el array " + array);
+            }else{
+                console.log("No existe, perdón")
+            }
+            
+            return array;
+        });
+    }
+    return text;
 } 
 async function singleCandidate(page,candidates){
     console.log(candidates)
