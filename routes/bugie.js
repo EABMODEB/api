@@ -57,19 +57,19 @@ app.get('/', async (req, res) => {
     await page.click('#passwordNext',wait);
     await page.waitForNavigation();
     await page.screenshot({
-    path: "googleLogin.jpg"
+        path: "googleLogin.jpg"
     });
     console.log("aqui ando");
     await page.goto("https://secure.indeed.com/account/login?hl=es_MX&co=MX&continue=https%3A%2F%2Fmx.indeed.com%2F&tmpl=desktop&service=my&from=gnav-util-homepage&jsContinue=https%3A%2F%2Fmx.indeed.com%2F&empContinue=https%3A%2F%2Faccount.indeed.com%2Fmyaccess",wait)
     await page.click("#login-google-button", wait);
     await page.waitForNavigation();
     await page.screenshot({
-    path:"indeed.jpg",
+        path:"indeed.jpg",
     })
     await page.click("#EmployersPostJob",wait);
         
     await page.screenshot({
-    path: "hola.jpg"
+        path: "hola.jpg"
     });
     //busca el trabajo
     console.log(getArray);
@@ -127,36 +127,36 @@ app.get('/', async (req, res) => {
             await page.goto("https://employers.indeed.com"+text);
             await page.waitForSelector('.cpqap-CandidateCell-name-text');
             const pages = await page.evaluate(()=>{
-            return  document.querySelectorAll(".cpqap-Pagination-page").length;
+                return  document.querySelectorAll(".cpqap-Pagination-page").length;
             })
             let candidates = [];
             let Pagination = [];
             for (let j=1; j<=pages+1;j++){
-            Pagination.push('https://employers.indeed.com'+text+"&p="+j);
+                Pagination.push('https://employers.indeed.com'+text+"&p="+j);
             }
             console.log(Pagination);
             for (const iterator of Pagination) {
-            await page.goto(iterator);
-            await page.waitForSelector(".cpqap-CandidateCell-name-text");
-            let listCandidates = await page.evaluate(()=>{
-                const values = document.querySelectorAll(".cpqap-CandidateCell-name-text");
-                const array = [];
-                let i=0;
-                const filtros = document.querySelectorAll('.cpqap-ScreenerQuestions-preferred');
-                values.forEach(element=>{
-                let rfilter =[];
-                rfilter = filtros[i].innerText.split(" ",1);
-                console.log(rfilter)
-                array.push({
-                    id:element.getAttribute('href'),
-                    filtros: rfilter[0],
-                });
-                i++;
+                await page.goto(iterator);
+                await page.waitForSelector(".cpqap-CandidateCell-name-text");
+                let listCandidates = await page.evaluate(()=>{
+                    const values = document.querySelectorAll(".cpqap-CandidateCell-name-text");
+                    const array = [];
+                    let i=0;
+                    const filtros = document.querySelectorAll('.cpqap-ScreenerQuestions-preferred');
+                        values.forEach(element=>{
+                        let rfilter =[];
+                        rfilter = filtros[i].innerText.split(" ",1);
+                        console.log(rfilter)
+                        array.push({
+                            id:element.getAttribute('href'),
+                            filtros: rfilter[0],
+                        });
+                        i++;
+                    })
+                    return array;
                 })
-                return array;
-            })
-            console.log(listCandidates);
-            candidates.push(listCandidates);
+                console.log(listCandidates);
+                candidates.push(listCandidates);
             }
             console.log(candidates);
             let i=0;
