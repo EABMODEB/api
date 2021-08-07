@@ -12,6 +12,7 @@ var corsOptions = {
 app.use(cors());
 app.options('/products/:id', cors()) // enable pre-flight request for DELETE request
 app.get('/', async (req, res) => {
+    console.log("hola");
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
 
@@ -24,57 +25,71 @@ app.get('/', async (req, res) => {
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
     res.setHeader('Access-Control-Allow-Credentials', true);
+    
     const browser = await puppeteer.launch({ 
         args: [
-            '--no-sandbox', 
-            '--disable-setuid-sandbox', 
-            '--disable-gpu'
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--disable-setuid-sandbox',
+            '--no-first-run',
+            '--no-sandbox',
+            '--no-zygote',
+            '--deterministic-fetch',
+            '--disable-features=IsolateOrigins',
+            '--disable-site-isolation-trials',
+            // '--single-process',
         ],
         headless:false,
     })
+    console.log("vivito");
     //abrir navegador
-
-    const page = await browser.newPage();
+    let page = await browser.newPage();
+    console.log("va");
     await page.setDefaultNavigationTimeout(0); 
+    
     //linea bendita que se hace pendejo al google jajajaja
-    await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36')
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
     
     //Convierte el JSON de Bugie en un arreglo para leer
     let get = req.query.options || '';
     let getArray = [];
     getArray=JSON.parse(get);
-    
-    await page.goto("https://accounts.google.com/AddSession/identifier?hl=es&continue=https%3A%2F%2Fmail.google.com%2Fmail&service=mail&ec=GAlAFw&flowName=GlifWebSignIn&flowEntry=AddSession",wait)
+    console.log("va");
+    await page.goto("https://accounts.google.com/signin/v2/identifier?hl=es-419&passive=true&continue=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dgoogle%26oq%3Dgoo%26aqs%3Dchrome.0.0i131i433i512j0i433i512j0i131i433i512j69i57j0i433i512l6%26pf%3Dcs%26sourceid%3Dchrome%26ie%3DUTF-8&ec=GAZAAQ&flowName=GlifWebSignIn&flowEntry=ServiceLogin",wait)
     await page.waitForSelector('#identifierId',wait);
-    await page.type('#identifierId', "daniel.growthy@gmail.com", { delay: 5 });
+    await page.type('#identifierId', "emmanuelibarratorres14@gmail.com", { delay: 5 });
     await page.click('#identifierNext');
+    console.log("va");
     await page.waitForSelector('#password input[type="password"]', { visible: true });
-    await page.type('#password input[type="password"]', "p1e2p1e2", { delay: 5 });
-    await page.waitForSelector('#password input[type="password"]', { visible: true });
+    await page.type('#password input[type="password"]', "1hf425wx", { delay: 5 });
+    await page.waitForSelector('#passwordNext');
+    console.log("va");
     await page.click('#passwordNext',wait);
-    await page.click('#passwordNext',wait);
-    await page.click('#passwordNext',wait);
-    await page.click('#passwordNext',wait);
-    await page.waitForNavigation();
-    await page.screenshot({
-    path: "googleLogin.jpg"
-    });
+    
     console.log("aqui ando");
+    await page.screenshot({
+        path: "prueba1.jpg"
+        });
     await page.goto("https://secure.indeed.com/account/login?hl=es_MX&co=MX&continue=https%3A%2F%2Fmx.indeed.com%2F&tmpl=desktop&service=my&from=gnav-util-homepage&jsContinue=https%3A%2F%2Fmx.indeed.com%2F&empContinue=https%3A%2F%2Faccount.indeed.com%2Fmyaccess",wait)
     await page.click("#login-google-button", wait);
-    await page.waitForNavigation();
+    await page.waitFor(10000);
     await page.screenshot({
-    path:"indeed.jpg",
-    })
-    await page.click("#EmployersPostJob",wait);
-        
+        path: "prueba2.jpg"
+        });
+    
+    await page.waitForSelector("#EmployersPostJob");
+    console.log("sigo vivo")
+    console.log("aun aqui");
+    await page.click("#EmployersPostJob");        
+    console.log("aun aqui");
     await page.screenshot({
-    path: "hola.jpg"
+    path: "hola1.jpg"
     });
     //busca el trabajo
     console.log(getArray);
     const search= getArray.values;
     console.log(search);
+    await page.screenshot({path:"trabado1.jpg"})
     await page.goto("https://employers.indeed.com/j#jobs?title="+search);
 
     let status = false;
@@ -182,8 +197,8 @@ app.get('/', async (req, res) => {
     });
     console.log(listCandidates);
     res.end(JSON.stringify(listCandidates));
-    console.log("hola")
-    await browser.close()
+    console.log("hola");
+    await browser.close();
 })
 module.exports = app;
 
