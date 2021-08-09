@@ -88,11 +88,11 @@ app.get('/', async (req, res) => {
     listCandidates = await page.evaluate(()=>{
         let listCandidates2 = [];
         let vacio = {};
-        console.log(values2);
         if(document.querySelector(".HanselEmptyState-container")){
             vacio = {name:"Sr1", filtros: "Sr1", status: "Sr1"};
             listCandidates2.push(vacio);
         }
+        console.log("me mantengo")
     
         return listCandidates2;
     });
@@ -101,22 +101,27 @@ app.get('/', async (req, res) => {
     const flag = await page.evaluate(()=>{
         return document.querySelector(".HanselEmptyState-container");
     });
-
+    let works;
     if(flag == null){
+        await page.waitForSelector(".css-i8euih",{visible:true});
         await page.waitForSelector(".css-zsw846");
-    
-        const works = await page.evaluate(()=>{
+        works= await page.evaluate(()=>{
+            const searchValue = document.querySelector(".css-i8euih").defaultValue;
             const values = document.querySelectorAll(".OneViewJobListItem-title-link");
             console.log(values);
             const array = [];
             values.forEach(element => {
-                if(element.innerText == search){
+                console.log(searchValue.toLowerCase())
+                console.log (element.innerText.toLowerCase());
+                if(element.innerText.toLowerCase() === searchValue.toLowerCase()){
+                    console.log("hola");
                     array.push(element.getAttribute('href'));
                 }
             });
+            console.log(array);
             return array;
         });
-    
+        console.log(works)
         let text = await allCandidates(page,works);
         console.log(text);
         
@@ -183,7 +188,7 @@ app.get('/', async (req, res) => {
     res.end(JSON.stringify(listCandidates));
     console.log("hola");
     await browser.close(); 
- })
+})
 module.exports = app;
 
 async function allCandidates(page,works){
