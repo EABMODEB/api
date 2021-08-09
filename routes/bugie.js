@@ -3,6 +3,7 @@ const wait = {waitUntil: 'domcontentloaded'};
 const puppeteer = require('puppeteer-extra');
 const cors = require("cors");
 const plugin = require("puppeteer-extra-plugin-stealth");
+const { Console } = require('console');
 puppeteer.use(plugin());
 const app = express();
 var corsOptions = {
@@ -39,7 +40,7 @@ app.get('/', async (req, res) => {
             '--disable-site-isolation-trials',
             // '--single-process',
         ],
-        headless:true,
+        headless:false,
     })
     console.log("vivito");
     //abrir navegador
@@ -54,11 +55,11 @@ app.get('/', async (req, res) => {
     console.log("va");
     await page.goto("https://accounts.google.com/signin/v2/identifier?hl=es-419&passive=true&continue=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dgoogle%26oq%3Dgoo%26aqs%3Dchrome.0.0i131i433i512j0i433i512j0i131i433i512j69i57j0i433i512l6%26pf%3Dcs%26sourceid%3Dchrome%26ie%3DUTF-8&ec=GAZAAQ&flowName=GlifWebSignIn&flowEntry=ServiceLogin",wait)
     await page.waitForSelector('#identifierId',wait);
-    await page.type('#identifierId', "emmanuelibarratorres14@gmail.com", { delay: 5 });
+    await page.type('#identifierId', "daniel.growthy@gmail.com", { delay: 5 });
     await page.click('#identifierNext');
     console.log("va");
     await page.waitForSelector('#password input[type="password"]', { visible: true });
-    await page.type('#password input[type="password"]', "1hf425wx", { delay: 5 });
+    await page.type('#password input[type="password"]', "p1e2p1e2", { delay: 5 });
     await page.waitForSelector('#passwordNext');
     console.log("va");
     await page.click('#passwordNext',wait);
@@ -67,7 +68,11 @@ app.get('/', async (req, res) => {
     await page.screenshot({
         path: "prueba1.jpg"
         });
-    const search= "psicologo";
+    let get = req.query.options || '';
+    let getArray = [];
+    getArray=JSON.parse(get); 
+
+    const search= getArray.values;
     console.log(search);
     await page.screenshot({path:"trabado1.jpg"})
     await page.goto("https://employers.indeed.com/j#jobs?title="+search);
@@ -79,41 +84,26 @@ app.get('/', async (req, res) => {
         });
     console.log("sigo vivo")        
     //busca el trabajo
-    
-    
-    
-    let status = false;
     let listCandidates = [];
     
     listCandidates = await page.evaluate(()=>{
-        const values2 = document.querySelectorAll(".HanselEmptyState-container");
         let listCandidates2 = [];
         let vacio = {};
         console.log(values2);
-        if(values2.length == 1){
-            array = null;
-            console.log("Sí entró")
-            status = true;
+        if(document.querySelector(".HanselEmptyState-container")){
             vacio = {name:"Sr1", filtros: "Sr1", status: "Sr1"};
             listCandidates2.push(vacio);
-        }else{
-            console.log("No entró")
         }
     
         return listCandidates2;
     });
-    
+    console.log(listCandidates);
+
     const flag = await page.evaluate(()=>{
-        let status = false;
-        const values2 = document.querySelectorAll(".HanselEmptyState-container");
-        if(values2.length == 1){
-            status = true;
-        }
-    
-        return status;
+        return document.querySelector(".HanselEmptyState-container");
     });
-    
-    if(flag == false){
+
+    if(flag == null){
         await page.waitForSelector(".css-zsw846");
     
         const works = await page.evaluate(()=>{
@@ -121,13 +111,16 @@ app.get('/', async (req, res) => {
             console.log(values);
             const array = [];
             values.forEach(element => {
-                array.push(element.getAttribute('href'));
+                if(element.innerText == search){
+                    array.push(element.getAttribute('href'));
+                }
             });
             return array;
         });
     
         let text = await allCandidates(page,works);
         console.log(text);
+        
         if(text.length > 0){
             await page.goto("https://employers.indeed.com"+text);
             await page.waitForSelector('.cpqap-CandidateCell-name-text');
@@ -179,6 +172,8 @@ app.get('/', async (req, res) => {
             listCandidates.push(vacio);
         }
         
+    }else{
+        Console.log("deberia tener información");
     }
     
     
@@ -204,8 +199,11 @@ async function allCandidates(page,works){
             if(document.querySelector(".css-f0xprd")){
                 const values = document.querySelectorAll(".css-f0xprd");
                 console.log("Mostrando el Values " + values);
-                array.push(values[1].getAttribute('href'));
-                console.log("Mostrando el array " + array);
+                if(values.length > 1){
+                    array.push(values[1].getAttribute('href'));
+                    console.log("Mostrando el array " + array);
+                }
+                
             }else{
                 console.log("No existe, perdón")
             }
