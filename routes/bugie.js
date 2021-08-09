@@ -26,7 +26,7 @@ app.get('/', async (req, res) => {
     // to the API (e.g. in case you use sessions)
     res.setHeader('Access-Control-Allow-Credentials', true);
     
-    const browser = await puppeteer.launch({ 
+    let browser = await puppeteer.launch({ 
         args: [
             '--disable-gpu',
             '--disable-dev-shm-usage',
@@ -39,7 +39,7 @@ app.get('/', async (req, res) => {
             '--disable-site-isolation-trials',
             // '--single-process',
         ],
-        headless:false,
+        headless:true,
     })
     console.log("vivito");
     //abrir navegador
@@ -51,9 +51,6 @@ app.get('/', async (req, res) => {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
     
     //Convierte el JSON de Bugie en un arreglo para leer
-    let get = req.query.options || '';
-    let getArray = [];
-    getArray=JSON.parse(get);
     console.log("va");
     await page.goto("https://accounts.google.com/signin/v2/identifier?hl=es-419&passive=true&continue=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dgoogle%26oq%3Dgoo%26aqs%3Dchrome.0.0i131i433i512j0i433i512j0i131i433i512j69i57j0i433i512l6%26pf%3Dcs%26sourceid%3Dchrome%26ie%3DUTF-8&ec=GAZAAQ&flowName=GlifWebSignIn&flowEntry=ServiceLogin",wait)
     await page.waitForSelector('#identifierId',wait);
@@ -70,28 +67,21 @@ app.get('/', async (req, res) => {
     await page.screenshot({
         path: "prueba1.jpg"
         });
-    await page.goto("https://secure.indeed.com/account/login?hl=es_MX&co=MX&continue=https%3A%2F%2Fmx.indeed.com%2F&tmpl=desktop&service=my&from=gnav-util-homepage&jsContinue=https%3A%2F%2Fmx.indeed.com%2F&empContinue=https%3A%2F%2Faccount.indeed.com%2Fmyaccess",wait)
-    await page.click("#login-google-button", wait);
-    await page.waitFor(10000);
-    await page.screenshot({
-        path: "prueba2.jpg"
-        });
-    
-    await page.waitForSelector("#EmployersPostJob");
-    console.log("sigo vivo")
-    console.log("aun aqui");
-    await page.click("#EmployersPostJob");        
-    console.log("aun aqui");
-    await page.screenshot({
-    path: "hola1.jpg"
-    });
-    //busca el trabajo
-    console.log(getArray);
-    const search= getArray.values;
+    const search= "psicologo";
     console.log(search);
     await page.screenshot({path:"trabado1.jpg"})
     await page.goto("https://employers.indeed.com/j#jobs?title="+search);
-
+    await page.waitForSelector("#login-google-button",{visible:true})
+    await page.click("#login-google-button", wait);
+    await page .waitForTimeout(10000);
+    await page.screenshot({
+        path: "prueba2.jpg"
+        });
+    console.log("sigo vivo")        
+    //busca el trabajo
+    
+    
+    
     let status = false;
     let listCandidates = [];
     
@@ -109,23 +99,23 @@ app.get('/', async (req, res) => {
         }else{
             console.log("No entró")
         }
-
+    
         return listCandidates2;
     });
-
+    
     const flag = await page.evaluate(()=>{
         let status = false;
         const values2 = document.querySelectorAll(".HanselEmptyState-container");
         if(values2.length == 1){
             status = true;
         }
-
+    
         return status;
     });
-
+    
     if(flag == false){
         await page.waitForSelector(".css-zsw846");
-
+    
         const works = await page.evaluate(()=>{
             const values = document.querySelectorAll(".OneViewJobListItem-title-link");
             console.log(values);
@@ -135,7 +125,7 @@ app.get('/', async (req, res) => {
             });
             return array;
         });
-
+    
         let text = await allCandidates(page,works);
         console.log(text);
         if(text.length > 0){
@@ -198,8 +188,8 @@ app.get('/', async (req, res) => {
     console.log(listCandidates);
     res.end(JSON.stringify(listCandidates));
     console.log("hola");
-    await browser.close();
-})
+    await browser.close(); 
+ })
 module.exports = app;
 
 async function allCandidates(page,works){
