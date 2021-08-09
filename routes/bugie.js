@@ -63,7 +63,7 @@ app.get('/', async (req, res) => {
     await page.waitForSelector('#passwordNext');
     console.log("va");
     await page.click('#passwordNext',wait);
-    
+    await page.waitForNavigation();
     console.log("aqui ando");
     await page.screenshot({
         path: "prueba1.jpg"
@@ -78,7 +78,6 @@ app.get('/', async (req, res) => {
     await page.goto("https://employers.indeed.com/j#jobs?title="+search);
     await page.waitForSelector("#login-google-button",{visible:true})
     await page.click("#login-google-button", wait);
-    await page .waitForTimeout(10000);
     await page.screenshot({
         path: "prueba2.jpg"
         });
