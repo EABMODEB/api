@@ -60,9 +60,12 @@ app.get('/', async (req, res) => {
     console.log("va");
     await page.waitForSelector('#password input[type="password"]', { visible: true });
     await page.type('#password input[type="password"]', "p1e2p1e2", { delay: 5 });
-    await page.waitForSelector('#passwordNext');
+    await page.waitForSelector('#passwordNext', { visible: true });
     console.log("va");
     await page.click('#passwordNext',wait);
+    await page.click('#passwordNext',wait);
+    await page.click('#passwordNext',wait);
+
     await page.waitForNavigation();
     console.log("aqui ando");
     await page.screenshot({
@@ -84,48 +87,52 @@ app.get('/', async (req, res) => {
     console.log("sigo vivo")        
     //busca el trabajo
     let listCandidates = [];
-    
-    listCandidates = await page.evaluate(()=>{
-        let listCandidates2 = [];
-        let vacio = {};
-        if(document.querySelector(".HanselEmptyState-container")){
-            vacio = {name:"Sr1", filtros: "Sr1", status: "Sr1"};
-            listCandidates2.push(vacio);
-        }
-        console.log("me mantengo")
-    
-        return listCandidates2;
-    });
-    console.log(listCandidates);
+
+    await page.waitForSelector(".jobs-JobsTab-ListControl",{visible:true})
+    console.log("Comida rica");
 
     const flag = await page.evaluate(()=>{
-        return document.querySelector(".HanselEmptyState-container");
+        let status = false;
+        const values2 = document.querySelectorAll(".HanselEmptyState-container");
+        if(values2.length == 1){
+            status = true;
+        }
+
+        return status;
     });
+
+    console.log("El trabajo se encuentra: " + flag);
     let works;
-    if(flag == null){
+    if(!flag){
         await page.waitForSelector(".css-i8euih",{visible:true});
         await page.waitForSelector(".css-zsw846");
         works= await page.evaluate(()=>{
             const searchValue = document.querySelector(".css-i8euih").defaultValue;
             const values = document.querySelectorAll(".OneViewJobListItem-title-link");
-            console.log(values);
+            console.log("Values 111: " + values);
             const array = [];
-            values.forEach(element => {
-                console.log(searchValue.toLowerCase())
-                console.log (element.innerText.toLowerCase());
-                if(element.innerText.toLowerCase() === searchValue.toLowerCase()){
-                    console.log("hola");
-                    array.push(element.getAttribute('href'));
-                }
-            });
+            if(values.length > 1){
+                values.forEach(element => {
+                    console.log(searchValue.toLowerCase());
+                    console.log (element.innerText.toLowerCase());
+                    if(element.innerText.toLowerCase() === searchValue.toLowerCase()){
+                        console.log("hola");
+                        array.push(element.getAttribute('href'));
+                    }
+                });
+            }else{
+                array.push(values[0].getAttribute('href'));
+            }
+            
             console.log(array);
             return array;
         });
-        console.log(works)
+        console.log("Works 130: " + works);
         let text = await allCandidates(page,works);
-        console.log(text);
+        console.log("Text 132: " + text);
         
         if(text.length > 0){
+            console.log("Entro al text.length 135");
             await page.goto("https://employers.indeed.com"+text);
             await page.waitForSelector('.cpqap-CandidateCell-name-text');
             const pages = await page.evaluate(()=>{
@@ -172,12 +179,15 @@ app.get('/', async (req, res) => {
                 }
             }
         }else{
+            console.log("No hay Candidatos");
             let vacio = {name:"Sr1", filtros: "Sr1", status: "Sr1"};
             listCandidates.push(vacio);
         }
         
     }else{
-        Console.log("deberia tener información");
+        console.log("No hay empleo");
+        let vacio = {name:"Sr1", filtros: "Sr1", status: "Sr1"};
+        listCandidates.push(vacio);
     }
     
     
@@ -202,10 +212,12 @@ async function allCandidates(page,works){
             const array = [];
             if(document.querySelector(".css-f0xprd")){
                 const values = document.querySelectorAll(".css-f0xprd");
-                console.log("Mostrando el Values " + values);
+                console.log("Mostrando el Values 214: " + values);
                 if(values.length > 1){
                     array.push(values[1].getAttribute('href'));
                     console.log("Mostrando el array " + array);
+                }else{
+                    array.push(values[0].getAttribute('href'));
                 }
                 
             }else{
