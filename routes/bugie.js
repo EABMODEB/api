@@ -150,18 +150,31 @@ app.get('/', async (req, res) => {
                 let listCandidates = await page.evaluate(()=>{
                     const values = document.querySelectorAll(".cpqap-CandidateCell-name-text");
                     const array = [];
-                    let i=0;
-                    const filtros = document.querySelectorAll('.cpqap-ScreenerQuestions-preferred');
+                    if(document.querySelector("'.cpqap-ScreenerQuestions-preferred'")){
+                        const filtros = document.querySelectorAll('.cpqap-ScreenerQuestions-preferred');
+                        let i=0;
                         values.forEach(element=>{
-                        let rfilter =[];
-                        rfilter = filtros[i].innerText.split(" ",1);
-                        console.log(rfilter)
-                        array.push({
-                            id:element.getAttribute('href'),
-                            filtros: rfilter[0],
-                        });
-                        i++;
-                    })
+                            let rfilter =[];
+                            rfilter = filtros[i].innerText.split(" ",1);
+                            console.log(rfilter)
+                            array.push({
+                                id:element.getAttribute('href'),
+                                filtros: rfilter[0],
+                            });
+                            i++;
+                        })
+                    }else{
+                        values.forEach(element=>{
+                            let rfilter =[];
+                            rfilter = "N/A";
+                            console.log(rfilter)
+                            array.push({
+                                id:element.getAttribute('href'),
+                                filtros: rfilter[0],
+                            });
+                        })
+                    }
+                    
                     return array;
                 })
                 console.log(listCandidates);
