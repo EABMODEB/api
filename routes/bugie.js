@@ -144,6 +144,7 @@ async function allCandidates(page,works){
     text = await page.evaluate(()=>{
     const values = document.querySelectorAll(".css-f0xprd");
     const array = [];
+    console.log("pozole")
     array.push(values[1].getAttribute('href'));
     console.log(array);
     return array;
