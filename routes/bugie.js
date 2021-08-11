@@ -50,7 +50,7 @@ app.get('/', async (req, res) => {
     
     //linea bendita que se hace pendejo al google jajajaja
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
-    
+    console.log("librex")
     //Convierte el JSON de Bugie en un arreglo para leer
     console.log("va");
     await page.goto("https://accounts.google.com/signin/v2/identifier?hl=es-419&passive=true&continue=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dgoogle%26oq%3Dgoo%26aqs%3Dchrome.0.0i131i433i512j0i433i512j0i131i433i512j69i57j0i433i512l6%26pf%3Dcs%26sourceid%3Dchrome%26ie%3DUTF-8&ec=GAZAAQ&flowName=GlifWebSignIn&flowEntry=ServiceLogin",wait)
