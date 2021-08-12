@@ -150,7 +150,7 @@ app.get('/', async (req, res) => {
                 let listCandidates = await page.evaluate(()=>{
                     const values = document.querySelectorAll(".cpqap-CandidateCell-name-text");
                     const array = [];
-                    if(document.querySelector("'.cpqap-ScreenerQuestions-preferred'")){
+                    if(document.querySelector(".cpqap-ScreenerQuestions-preferred")){
                         const filtros = document.querySelectorAll('.cpqap-ScreenerQuestions-preferred');
                         let i=0;
                         values.forEach(element=>{
