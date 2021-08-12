@@ -52,14 +52,30 @@ app.get('/', async (req, res) => {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
     console.log("librex")
     //Convierte el JSON de Bugie en un arreglo para leer
+    let get = req.query.options || '';
+    let getArray = [];
+    getArray=JSON.parse(get); 
+
+    let account = "";
+    let password = "";
+
+    if(getArray.account === "0"){
+        account = "daniel.growthy@gmail.com";
+        password = "p1e2p1e2";
+    }else{
+        account = "emmanuelibarratorres14@gmail.com";
+        password = "1hf425wx";
+    }
+    console.log("Es la cuenta de " + account + " y la contraseña es " + password);
+
     console.log("va");
     await page.goto("https://accounts.google.com/signin/v2/identifier?hl=es-419&passive=true&continue=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dgoogle%26oq%3Dgoo%26aqs%3Dchrome.0.0i131i433i512j0i433i512j0i131i433i512j69i57j0i433i512l6%26pf%3Dcs%26sourceid%3Dchrome%26ie%3DUTF-8&ec=GAZAAQ&flowName=GlifWebSignIn&flowEntry=ServiceLogin",wait)
     await page.waitForSelector('#identifierId',wait);
-    await page.type('#identifierId', "daniel.growthy@gmail.com", { delay: 5 });
+    await page.type('#identifierId', account, { delay: 5 });
     await page.click('#identifierNext');
     console.log("va");
     await page.waitForSelector('#password input[type="password"]', { visible: true });
-    await page.type('#password input[type="password"]', "p1e2p1e2", { delay: 5 });
+    await page.type('#password input[type="password"]', password, { delay: 5 });
     await page.waitForSelector('#passwordNext', { visible: true });
     console.log("va");
     await page.click('#passwordNext',wait);
@@ -71,9 +87,7 @@ app.get('/', async (req, res) => {
     await page.screenshot({
         path: "prueba1.jpg"
         });
-    let get = req.query.options || '';
-    let getArray = [];
-    getArray=JSON.parse(get); 
+    
 
     const search= getArray.values;
     console.log(search);
@@ -193,7 +207,7 @@ app.get('/', async (req, res) => {
             }
         }else{
             console.log("No hay Candidatos");
-            let vacio = {name:"Sr1", filtros: "Sr1", status: "Sr1"};
+            let vacio = {name:"Sr2", filtros: "Sr2", status: "Sr2"};
             listCandidates.push(vacio);
         }
         
